@@ -1,4 +1,5 @@
 from itertools import combinations
+import pyperclip  # Add this import at the top
 
 def find_minimum_epins(target, epins):
     epins = sorted(epins, reverse=True)  # Sort in descending order for efficiency
@@ -24,9 +25,20 @@ gpay_epins = [
 ]
 
 # Example Usage
-try:
-    target_amount = float(input("Enter the target amount: "))
-    result = find_minimum_epins(target_amount, gpay_epins)
-    print("Optimal ePINs:", result)
-except ValueError:
-    print("Please enter a valid number")
+while True:  # Add continuous loop
+    try:
+        target_amount = float(input("Hedef tutarı girin (Çıkmak için Ctrl+C): "))
+        result = find_minimum_epins(target_amount, gpay_epins)
+        print("En uygun Gpay ePINleri:", result)
+        
+        if isinstance(result, tuple):  # Only create clipboard text if we found a valid combination
+            clipboard_text = "➕".join(str(int(x) if x.is_integer() else x) for x in result)
+            pyperclip.copy(clipboard_text)
+            print("Panoya kopyalandı:", clipboard_text)
+        print("\n")  # Add blank line between iterations
+        
+    except ValueError:
+        print("Lütfen geçerli bir sayı girin\n")
+    except KeyboardInterrupt:
+        print("\nProgramdan çıkılıyor...")
+        break
