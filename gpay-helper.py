@@ -1,20 +1,32 @@
-from itertools import combinations
-import pyperclip  # Add this import at the top
+from itertools import combinations_with_replacement
+import pyperclip
 
 def find_minimum_epins(target, epins):
-    epins = sorted(epins, reverse=True)  # Sort in descending order for efficiency
+    epins = sorted(epins, reverse=True)  # Sort in descending order
+    min_length = float('inf')
     best_combination = None
+    min_difference = float('inf')
     
-    for r in range(1, len(epins) + 1):
-        for combination in combinations(epins, r):
-            if sum(combination) == target:
-                if best_combination is None or len(combination) < len(best_combination):
-                    best_combination = combination
-        
-        if best_combination:
-            break  # Stop searching once we find the best combination
+    # Try combinations from smallest to largest length
+    for r in range(1, 5):  # Limit to reasonable combinations (1-4 elements)
+        if best_combination and r > min_length:
+            break
+            
+        for combination in combinations_with_replacement(epins, r):
+            sum_combination = sum(combination)
+            difference = sum_combination - target
+            
+            # Find the combination that's either exact or slightly above target
+            if difference >= 0 and difference < min_difference:
+                min_difference = difference
+                min_length = len(combination)
+                best_combination = combination
+                
+                # If we found an exact match, we can stop looking
+                if difference == 0:
+                    break
     
-    return best_combination if best_combination else "No exact match found"
+    return best_combination if best_combination else "Eşleşme bulunamadı"
 
 # Available Gpay ePINs
 gpay_epins = [
@@ -25,17 +37,17 @@ gpay_epins = [
 ]
 
 # Example Usage
-while True:  # Add continuous loop
+while True:
     try:
         target_amount = float(input("Hedef tutarı girin (Çıkmak için Ctrl+C): "))
         result = find_minimum_epins(target_amount, gpay_epins)
         print("En uygun Gpay ePINleri:", result)
         
-        if isinstance(result, tuple):  # Only create clipboard text if we found a valid combination
+        if isinstance(result, tuple):
             clipboard_text = "➕".join(str(int(x) if x.is_integer() else x) for x in result)
             pyperclip.copy(clipboard_text)
             print("Panoya kopyalandı:", clipboard_text)
-        print("\n")  # Add blank line between iterations
+        print("\n")
         
     except ValueError:
         print("Lütfen geçerli bir sayı girin\n")
