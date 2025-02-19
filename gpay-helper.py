@@ -2,29 +2,25 @@ from itertools import combinations_with_replacement
 import pyperclip
 
 def find_minimum_epins(target, epins):
-    epins = sorted(epins, reverse=True)  # Sort in descending order
+    epins = sorted(epins, reverse=True)
     min_length = float('inf')
     best_combination = None
-    min_difference = float('inf')
+    max_sum = 0  # Track the highest sum that's still under or equal to target
     
     # Try combinations from smallest to largest length
-    for r in range(1, 5):  # Limit to reasonable combinations (1-4 elements)
-        if best_combination and r > min_length:
-            break
-            
+    for r in range(1, 8):  # Increased max length to handle larger combinations
         for combination in combinations_with_replacement(epins, r):
             sum_combination = sum(combination)
-            difference = sum_combination - target
             
-            # Find the combination that's either exact or slightly above target
-            if difference >= 0 and difference < min_difference:
-                min_difference = difference
+            # Only consider combinations that don't exceed the target
+            if sum_combination <= target and sum_combination > max_sum:
+                max_sum = sum_combination
                 min_length = len(combination)
                 best_combination = combination
                 
-                # If we found an exact match, we can stop looking
-                if difference == 0:
-                    break
+                # If we found an exact match, we can stop
+                if sum_combination == target:
+                    return combination
     
     return best_combination if best_combination else "Eşleşme bulunamadı"
 
