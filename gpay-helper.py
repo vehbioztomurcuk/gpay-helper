@@ -35,7 +35,7 @@ gpay_epins = [
 # Example Usage
 while True:
     try:
-        target_amount = float(input("Hedef tutarı girin (Çıkmak için Ctrl+C): "))
+        target_amount = float(input("Hedef tutarı girin (Çıkmak için Ctrl➕C): "))
         result = find_minimum_epins(target_amount, gpay_epins)
         print("En uygun Gpay ePINleri:", result)
         
