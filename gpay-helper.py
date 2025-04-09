@@ -37,12 +37,17 @@ while True:
     try:
         target_amount = float(input("Hedef tutarı girin (Çıkmak için Ctrl➕C): "))
         result = find_minimum_epins(target_amount, gpay_epins)
-        print("En uygun Gpay ePINleri:", result)
         
         if isinstance(result, tuple):
-            clipboard_text = "➕".join(str(int(x) if x.is_integer() else x) for x in result)
-            pyperclip.copy(clipboard_text)
-            print("Panoya kopyalandı:", clipboard_text)
+            result_sum = sum(result)
+            pins_text = "➕".join(str(int(x) if x.is_integer() else x) for x in result)
+            formatted_output = f"{result_sum} ({pins_text})"
+            print("En uygun Gpay ePINleri:", formatted_output)
+            
+            pyperclip.copy(formatted_output)
+            print("Panoya kopyalandı:", formatted_output)
+        else:
+            print("En uygun Gpay ePINleri:", result)
         print("\n")
         
     except ValueError:
